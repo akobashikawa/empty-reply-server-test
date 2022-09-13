@@ -4,12 +4,6 @@ const express = require('express');
 const app = express();
 const PORT = 3030;
 
-https
-  .createServer(app)
-  .listen(PORT, ()=>{
-    console.log("Server listening on PORT", PORT)
-  });
-
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
@@ -26,3 +20,14 @@ app.post('/', (req, res) => {
     console.log('req.rawHeaders', req.rawHeaders);
     // res.send("POST Request Called\n");
 });
+
+const options = {
+    key: fs.readFileSync("key.pem"),
+    cert: fs.readFileSync("cert.pem"),
+};
+
+https
+  .createServer(options, app)
+  .listen(PORT, ()=>{
+    console.log("Server listening on PORT", PORT)
+  });
