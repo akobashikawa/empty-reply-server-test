@@ -1,8 +1,10 @@
 const https = require("https");
+const http2Express = require('http2-express-bridge');
+const http2 = require("http2");
 const fs = require("fs");
 const express = require('express');
 const { throws } = require("assert");
-const app = express();
+const app = http2Express(express);
 const PORT = 3030;
 
 app.use(express.json());
@@ -33,11 +35,12 @@ const options = {
     cert: fs.readFileSync("cert.pem"),
 };
 
-https
-  .createServer(options, app)
-  .listen(PORT, ()=>{
-    console.log("Server listening on PORT", PORT)
-  });
+const server = http2
+  .createSecureServer(options, app);
+
+server.listen(PORT, ()=>{
+  console.log("Server listening on PORT", PORT);
+});
 
 // app.listen(PORT, ()=>{
 //   console.log("Server listening on PORT", PORT)
